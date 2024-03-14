@@ -1,0 +1,152 @@
+Project ecommerce {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Simple Ecommerce Database
+    # Author: DAM ANH HAO
+  '''
+}
+
+Table users as U {
+  user_id bigint [pk]
+  username varchar [not null]
+  full_name varchar [not null]
+  email varchar [unique, not null]
+  phone varchar [not null]
+  avatar varchar [not null]
+  country varchar [not null]
+  city varchar [not null]
+  street_address varchar [not null]
+  zip varchar [not null]
+  status bool [ default: `true`]
+  hashed_password varchar [not null]
+  password_changed_at timestamptz [not null, default: '0001-01-01 00:00:00Z']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+}
+
+Table Products as P{
+  product_id bigint [pk]
+  product_name varchar [not null]
+  product_thumb varchar [not null]
+  product_description varchar
+  product_slug varchar
+  product_price bigint [not null]
+  product_quantity bigint [not null]
+  product_type varchar [note: 'Electronics, Clothing, Furniture', not null]
+  product_shop ObjectId [ref: > U.user_id, not null]
+  product_attributes JSON [not null]
+  product_ratingsAverage Number [default: 4.5]
+  product_variations JSON [default:`[]`]
+  isDraft Boolean [default: `true`]
+  isPublished Boolean [default: `false`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+
+  indexes {
+    isDraft
+    isPublished
+    (isDraft,isPublished,product_shop) [unique]
+  }
+}
+
+Table Discount as D {
+  discount_id bigint [pk]
+  discount_name varchar [not null]
+  discount_description varchar [not null]
+  discount_type varchar [default: 'fixed_amount']
+  discount_value bigint [not null]
+  discount_code varchar [not null]
+  discount_start_date timestamptz [not null, default: `now()`]
+  discount_end_date timestamptz [not null]
+  discount_max_uses bigint [not null]
+  discount_uses_count bigint [not null]
+  discount_users_used JSON [default: `[]`]
+  discount_max_uses_per_user bigint [not null]
+  discount_min_order_value  bigint [not null]
+  discount_shopId ObjectId [ref: > U.user_id, not null]
+  discount_is_active bool [default: `true`]
+  discount_applies_to varchar [not null, note: 'all, specific']
+  discount_product_ids JSON [default: `[]`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+
+  indexes {
+    discount_shopId
+  }
+}
+
+Table Cart as C {
+  cart_id bigint [pk]
+  cart_state varchar [not null]
+  enums varchar [note: 'active, completed, fail, pending, lock', default: 'active']
+  cart_products JSON [not null, default: `[]`]
+  cart_count_product bigint [default: `0`]
+  cart_UserId bigint [not null]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+}
+
+Table Order as O {
+  order_id bigint [pk]
+  order_userId bigint [not null]
+  order_checkout Object [default: `[]`]
+  order_shipping Object [default: `[]`]
+  order_payment Object [default: `[]`]
+  order_products JSON [not null, default: `[]`]
+  order_trackingNumber varchar [default: '#0000103112023']
+  order_status varchar [note: 'pending, confirmed, shipped, cancelled, delivered', default: 'pending']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+}
+
+Table Inventory as I {
+  inven_productId ObjectId [ref: > P.product_id, not null]
+  inven_location varchar [default: 'unKnow']
+  inven_stock bigint [not null]
+  inven_shopId ObjectId [ref: > U.user_id, not null]
+  inven_reservations JSON [default: `[]`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+
+  indexes {
+    inven_productId
+    inven_shopId
+    (inven_productId, inven_shopId) [unique]
+  }
+}
+
+Table Comment  {
+  comment_id bigint [pk]
+  comment_productId  ObjectId [ref: > P.product_id, not null]
+  comment_userId bigint [default: `1`]
+  comment_content varchar [default: `text`]
+  comment_right bigint [default: `0`]
+  comment_left bigint [default: `0`]
+  comment_parentId ObjectId [ref: > Comment.comment_id, not null]
+  isDeleted bool [default: `false`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+
+  indexes {
+    comment_productId
+    comment_parentId
+    (comment_productId, comment_parentId) [unique]
+  }
+}
+
+Table notification as N{
+  noti_id bigint [pk]
+  noti_type varchar [ not null , note: 'ORDER-001, ORDER-002, ORDER-003, SHOP-001,POROMOTION-001']
+  noti_senderId ObjectId [ref: > U.user_id, not null]
+  noti_receivedId bigint [not null]
+  noti_content varchar [not null]
+  noti_options ObjectId [default: `{}`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz
+
+  indexes {
+    noti_senderId
+  }
+}
+
+

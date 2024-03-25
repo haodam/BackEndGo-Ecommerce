@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-03-14T14:58:41.334Z
+-- Generated at: 2024-03-19T08:48:01.299Z
 
 CREATE TABLE "users" (
   "user_id" bigint PRIMARY KEY,
@@ -20,7 +20,7 @@ CREATE TABLE "users" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "Products" (
+CREATE TABLE "products" (
   "product_id" bigint PRIMARY KEY,
   "product_name" varchar NOT NULL,
   "product_thumb" varchar NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE "Products" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "Discount" (
+CREATE TABLE "discounts" (
   "discount_id" bigint PRIMARY KEY,
   "discount_name" varchar NOT NULL,
   "discount_description" varchar NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE "Discount" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "Cart" (
+CREATE TABLE "carts" (
   "cart_id" bigint PRIMARY KEY,
   "cart_state" varchar NOT NULL,
   "enums" varchar DEFAULT 'active',
@@ -72,7 +72,7 @@ CREATE TABLE "Cart" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "Order" (
+CREATE TABLE "orders" (
   "order_id" bigint PRIMARY KEY,
   "order_userId" bigint NOT NULL,
   "order_checkout" Object DEFAULT ([]),
@@ -85,9 +85,9 @@ CREATE TABLE "Order" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "Inventory" (
+CREATE TABLE "inventory" (
   "inven_productId" ObjectId NOT NULL,
-  "inven_location" varchar DEFAULT 'unKnow',
+  "inven_location" varchar DEFAULT 'unKnown',
   "inven_stock" bigint NOT NULL,
   "inven_shopId" ObjectId NOT NULL,
   "inven_reservations" JSON DEFAULT ([]),
@@ -95,7 +95,7 @@ CREATE TABLE "Inventory" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "Comment" (
+CREATE TABLE "comments" (
   "comment_id" bigint PRIMARY KEY,
   "comment_productId" ObjectId NOT NULL,
   "comment_userId" bigint DEFAULT (1),
@@ -108,7 +108,7 @@ CREATE TABLE "Comment" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "notification" (
+CREATE TABLE "notifications" (
   "noti_id" bigint PRIMARY KEY,
   "noti_type" varchar NOT NULL,
   "noti_senderId" ObjectId NOT NULL,
@@ -119,48 +119,48 @@ CREATE TABLE "notification" (
   "updated_at" timestamptz
 );
 
-CREATE INDEX ON "Products" ("isDraft");
+CREATE INDEX ON "products" ("isDraft");
 
-CREATE INDEX ON "Products" ("isPublished");
+CREATE INDEX ON "products" ("isPublished");
 
-CREATE UNIQUE INDEX ON "Products" ("isDraft", "isPublished", "product_shop");
+CREATE UNIQUE INDEX ON "products" ("isDraft", "isPublished", "product_shop");
 
-CREATE INDEX ON "Discount" ("discount_shopId");
+CREATE INDEX ON "discounts" ("discount_shopId");
 
-CREATE INDEX ON "Inventory" ("inven_productId");
+CREATE INDEX ON "inventory" ("inven_productId");
 
-CREATE INDEX ON "Inventory" ("inven_shopId");
+CREATE INDEX ON "inventory" ("inven_shopId");
 
-CREATE UNIQUE INDEX ON "Inventory" ("inven_productId", "inven_shopId");
+CREATE UNIQUE INDEX ON "inventory" ("inven_productId", "inven_shopId");
 
-CREATE INDEX ON "Comment" ("comment_productId");
+CREATE INDEX ON "comments" ("comment_productId");
 
-CREATE INDEX ON "Comment" ("comment_parentId");
+CREATE INDEX ON "comments" ("comment_parentId");
 
-CREATE UNIQUE INDEX ON "Comment" ("comment_productId", "comment_parentId");
+CREATE UNIQUE INDEX ON "comments" ("comment_productId", "comment_parentId");
 
-CREATE INDEX ON "notification" ("noti_senderId");
+CREATE INDEX ON "notifications" ("noti_senderId");
 
-COMMENT ON COLUMN "Products"."product_type" IS 'Electronics, Clothing, Furniture';
+COMMENT ON COLUMN "products"."product_type" IS 'Electronics, Clothing, Furniture';
 
-COMMENT ON COLUMN "Discount"."discount_applies_to" IS 'all, specific';
+COMMENT ON COLUMN "discounts"."discount_applies_to" IS 'all, specific';
 
-COMMENT ON COLUMN "Cart"."enums" IS 'active, completed, fail, pending, lock';
+COMMENT ON COLUMN "carts"."enums" IS 'active, completed, fail, pending, lock';
 
-COMMENT ON COLUMN "Order"."order_status" IS 'pending, confirmed, shipped, cancelled, delivered';
+COMMENT ON COLUMN "orders"."order_status" IS 'pending, confirmed, shipped, cancelled, delivered';
 
-COMMENT ON COLUMN "notification"."noti_type" IS 'ORDER-001, ORDER-002, ORDER-003, SHOP-001,POROMOTION-001';
+COMMENT ON COLUMN "notifications"."noti_type" IS 'ORDER-001, ORDER-002, ORDER-003, SHOP-001, PROMOTION-001';
 
-ALTER TABLE "Products" ADD FOREIGN KEY ("product_shop") REFERENCES "users" ("user_id");
+ALTER TABLE "products" ADD FOREIGN KEY ("product_shop") REFERENCES "users" ("user_id");
 
-ALTER TABLE "Discount" ADD FOREIGN KEY ("discount_shopId") REFERENCES "users" ("user_id");
+ALTER TABLE "discounts" ADD FOREIGN KEY ("discount_shopId") REFERENCES "users" ("user_id");
 
-ALTER TABLE "Inventory" ADD FOREIGN KEY ("inven_productId") REFERENCES "Products" ("product_id");
+ALTER TABLE "inventory" ADD FOREIGN KEY ("inven_productId") REFERENCES "products" ("product_id");
 
-ALTER TABLE "Inventory" ADD FOREIGN KEY ("inven_shopId") REFERENCES "users" ("user_id");
+ALTER TABLE "inventory" ADD FOREIGN KEY ("inven_shopId") REFERENCES "users" ("user_id");
 
-ALTER TABLE "Comment" ADD FOREIGN KEY ("comment_productId") REFERENCES "Products" ("product_id");
+ALTER TABLE "comments" ADD FOREIGN KEY ("comment_productId") REFERENCES "products" ("product_id");
 
-ALTER TABLE "Comment" ADD FOREIGN KEY ("comment_parentId") REFERENCES "Comment" ("comment_id");
+ALTER TABLE "comments" ADD FOREIGN KEY ("comment_parentId") REFERENCES "comments" ("comment_id");
 
-ALTER TABLE "notification" ADD FOREIGN KEY ("noti_senderId") REFERENCES "users" ("user_id");
+ALTER TABLE "notifications" ADD FOREIGN KEY ("noti_senderId") REFERENCES "users" ("user_id");

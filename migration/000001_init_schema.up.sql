@@ -3,7 +3,7 @@
 -- Generated at: 2024-03-19T08:48:01.299Z
 
 CREATE TABLE "users" (
-    "user_id" bigint PRIMARY KEY,
+    "user_id" bigserial PRIMARY KEY,
     "username" varchar NOT NULL,
     "full_name" varchar NOT NULL,
     "email" varchar UNIQUE NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "products" (
-    "product_id" bigint PRIMARY KEY,
+    "product_id" bigserial PRIMARY KEY,
     "product_name" varchar NOT NULL,
     "product_thumb" varchar NOT NULL,
     "product_description" varchar,
@@ -40,7 +40,7 @@ CREATE TABLE "products" (
 );
 
 CREATE TABLE "discounts" (
-    "discount_id" bigint PRIMARY KEY,
+    "discount_id" bigserial PRIMARY KEY,
     "discount_name" varchar NOT NULL,
     "discount_description" varchar NOT NULL,
     "discount_type" varchar DEFAULT 'fixed_amount',
@@ -61,7 +61,7 @@ CREATE TABLE "discounts" (
 );
 
 CREATE TABLE "carts" (
-    "cart_id" bigint PRIMARY KEY,
+    "cart_id" bigserial PRIMARY KEY,
     "cart_state" varchar NOT NULL,
     "enums" varchar DEFAULT 'active',
     "cart_products" JSON NOT NULL DEFAULT '[]'::json,
@@ -72,7 +72,7 @@ CREATE TABLE "carts" (
 );
 
 CREATE TABLE "orders" (
-    "order_id" bigint PRIMARY KEY,
+    "order_id" bigserial PRIMARY KEY,
     "order_userId" bigint NOT NULL,
     "order_checkout" JSON DEFAULT '[]'::json,
     "order_shipping" JSON DEFAULT '[]'::json,
@@ -85,7 +85,7 @@ CREATE TABLE "orders" (
 );
 
 CREATE TABLE "inventory" (
-    "inven_productId" bigint NOT NULL,
+    "inven_productId" bigserial NOT NULL,
     "inven_location" varchar DEFAULT 'unKnown',
     "inven_stock" bigint NOT NULL,
     "inven_shopId" bigint NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE "inventory" (
 );
 
 CREATE TABLE "comments" (
-    "comment_id" bigint PRIMARY KEY,
+    "comment_id" bigserial PRIMARY KEY,
     "comment_productId" bigint NOT NULL,
     "comment_userId" bigint DEFAULT 1,
     "comment_content" varchar DEFAULT 'text',
@@ -108,7 +108,7 @@ CREATE TABLE "comments" (
 );
 
 CREATE TABLE "notifications" (
-    "noti_id" bigint PRIMARY KEY,
+    "noti_id" bigserial PRIMARY KEY,
     "noti_type" varchar NOT NULL,
     "noti_senderId" bigint NOT NULL,
     "noti_receivedId" bigint NOT NULL,

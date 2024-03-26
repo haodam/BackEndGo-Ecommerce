@@ -1,18 +1,12 @@
 version: "2"
 sql:
-  - schema: "migration"
-    queries: "internal/users/repository/query"
+  - schema: "./migration"
+    queries: "./internal/users/repository/query"
     engine: "postgresql"
     gen:
       go:
-        package: "users"
-        out: "internal/users/repository/sqlc"
-        sql_package: "pgx/v5"
+        package: "repository"
+        out: "./internal/users/repository/sqlc"
         emit_json_tags: true
         emit_interface: true
         emit_empty_slices: true
-        overrides:
-          - db_type: "timestamptz"
-            go_type: "time.Time"
-          - db_type: "uuid"
-            go_type: "github.com/google/uuid.UUID"
